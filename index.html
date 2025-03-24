@@ -1,26 +1,77 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>سؤال</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f0f0f0;
+import { useState } from "react";
+
+export default function DocumentRequestApp() {
+  const [step, setStep] = useState(1);
+  const [isNewCustomer, setIsNewCustomer] = useState("");
+  const [isAdminHandled, setIsAdminHandled] = useState("");
+  const [hasStocks, setHasStocks] = useState("");
+  const [documents, setDocuments] = useState([]);
+
+  const handleNextStep = () => {
+    setStep(step + 1);
+  };
+
+  const updateDocuments = () => {
+    let docs = [];
+    if (isNewCustomer === "ja") {
+      docs.push("Permanente stukken");
     }
-    h1 {
-      font-size: 3rem;
-      color: #333;
+    if (isAdminHandled === "nee") {
+      docs.push("Auditfile", "Afschrijvingsstaat", "Facturen van investeringen");
     }
-  </style>
-</head>
-<body>
-  <h1>تخليني؟</h1>
-</body>
-</html>
+    if (hasStocks === "ja") {
+      docs.push("Specificatie effecten");
+    }
+    setDocuments(docs);
+  };
+
+  return (
+    <div className="max-w-lg mx-auto p-6 space-y-4 bg-gray-100 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-center">Documenten Opvragen</h1>
+      
+      {step === 1 && (
+        <div className="p-4 space-y-2 border rounded bg-white">
+          <label className="block font-medium">Betreft het een nieuwe klant?</label>
+          <select className="w-full p-2 border rounded" onChange={(e) => { setIsNewCustomer(e.target.value); handleNextStep(); }}>
+            <option value="">Selecteer</option>
+            <option value="ja">Ja</option>
+            <option value="nee">Nee</option>
+          </select>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="p-4 space-y-2 border rounded bg-white">
+          <label className="block font-medium">Wordt de administratie door ons verzorgd?</label>
+          <select className="w-full p-2 border rounded" onChange={(e) => { setIsAdminHandled(e.target.value); handleNextStep(); }}>
+            <option value="">Selecteer</option>
+            <option value="ja">Ja</option>
+            <option value="nee">Nee</option>
+          </select>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="p-4 space-y-2 border rounded bg-white">
+          <label className="block font-medium">Heeft het bedrijf effecten?</label>
+          <select className="w-full p-2 border rounded" onChange={(e) => { setHasStocks(e.target.value); handleNextStep(); updateDocuments(); }}>
+            <option value="">Selecteer</option>
+            <option value="ja">Ja</option>
+            <option value="nee">Nee</option>
+          </select>
+        </div>
+      )}
+      
+      {step > 3 && documents.length > 0 && (
+        <div className="mt-6 p-4 border rounded bg-white">
+          <h2 className="text-xl font-bold">Op te vragen stukken</h2>
+          <ul className="list-disc list-inside">
+            {documents.map((doc, index) => (
+              <li key={index}>{doc}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
