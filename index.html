@@ -91,6 +91,11 @@
     let isNewCustomer = '';
     let isAdminHandled = '';
     let hasStocks = '';
+    let isVatPliable = '';
+    let isBV = '';
+    let isNewToneLoonAdmin = '';
+    let hasCash = '';
+    let hasSecurities = '';
     let documents = [];
     let explanation = '';
 
@@ -108,15 +113,15 @@
 
       switch (step) {
         case 1:
-          question.textContent = 'Is het een nieuwe klant?';
-          explanation = 'Ja: De permanente stukken worden opgevraagd. (Organisatie, oprichtingsakte, aandeelhoudersregister, etc.)\nNee: Ga door naar vraag 2.';
+          question.textContent = 'Betreft het een nieuwe klant?';
+          explanation = 'Ja: De permanente stukken worden opgevraagd.\nNee: Permanente stukken hebben wij al en hoeven niet opgevraagd te worden.';
           break;
         case 2:
-          question.textContent = 'Wordt de administratie verzorgd door de klant?';
+          question.textContent = 'Wordt de administratie verzorgd door Newtone?';
           explanation = 'Ja: Geen documenten nodig.\nNee: Kolommenbalans, Afschrijvingsstaat, Facturen van investeringen, etc. worden opgevraagd.';
           break;
         case 3:
-          question.textContent = 'Zal de administratie verzorgd worden door NewTone?';
+          question.textContent = 'Zal de administratie verzorgd worden door Newtone?';
           explanation = 'Ja: Nieuwe documenten worden mogelijk opgevraagd.\nNee: Kolommenbalans, Afschrijvingsstaat, Facturen van investeringen worden opgevraagd.';
           break;
         case 4:
@@ -132,7 +137,7 @@
           explanation = 'Ja: Aangiften dividendbelasting, vennootschapsbelasting, etc. worden opgevraagd.\nNee: Ga door naar vraag 7.';
           break;
         case 7:
-          question.textContent = 'Verwerkt NewTone de loonadministratie?';
+          question.textContent = 'Verzorgt Newtone de loonadministratie voor de klant?';
           explanation = 'Ja: Geen extra documenten nodig.\nNee: Jaarwerk, ingediende aangiften loonheffing, en specificatie reserveringen worden opgevraagd.';
           break;
         case 8:
@@ -180,8 +185,24 @@
       } else if (step === 3) {
         hasStocks = answer;
         step = 4; // Ga naar vraag 4
+      } else if (step === 4) {
+        hasStocks = answer;
+        step = 5;
+      } else if (step === 5) {
+        isVatPliable = answer;
+        step = 6;
+      } else if (step === 6) {
+        isBV = answer;
+        step = 7;
+      } else if (step === 7) {
+        isNewToneLoonAdmin = answer;
+        step = 8;
+      } else if (step === 8) {
+        hasCash = answer;
+        step = 9;
       } else {
-        step++;
+        hasSecurities = answer;
+        step = 10;
       }
 
       showQuestion();
@@ -201,28 +222,101 @@
     function updateDocuments() {
       if (isNewCustomer === 'ja') {
         documents.push(
-          'Permanente stukken',
-          'Wijzigingen organisatie',
-          'Oprichtingsakte/statuten',
-          'Aandeelhoudersregister',
-          'Overeenkomsten met aandeelhouders/verbonden partijen'
+          { title: 'Permanente stukken', group: 'Permanente stukken', items: [
+            'Wijzigingen organisatie',
+            'Oprichtingsakte/statuten',
+            'Aandeelhoudersregister',
+            'Overeenkomsten met aandeelhouders/verbonden partijen',
+            'Huurcontracten',
+            'Koop/verkoopovereenkomsten van betekenis',
+            'Leaseovereenkomsten (financieel en operationeel)',
+            'Financieringsovereenkomsten / rekening-courantfaciliteiten',
+            'Verzekeringsovereenkomsten',
+            'Pensioenreglement',
+            'Personeelsreglement',
+            'CAO',
+            'Bonusregelingen met personeel',
+            'Beschikking fiscale eenheid vennootschapsbelasting',
+            'Beschikking fiscale eenheid omzetbelasting',
+            'Fiscale controlerapporten',
+            'Taxatierapporten',
+            'Aankoopaktes deelnemingen, gebouwen, etc.',
+            'Garantieverplichtingen / leveringsvoorwaarden'
+          ]}
         );
       }
       if (isAdminHandled === 'nee') {
-        documents.push('Kolommenbalans (Auditfile)', 'Afschrijvingsstaat', 'Facturen van investeringen');
+        documents.push({ title: 'Administratie', group: 'Essentieel', items: [
+          'Kolommenbalans (Auditfile)', 
+          'Afschrijvingsstaat', 
+          'Facturen/specificatie van (des)investeringen',
+          'OZB-aanslagen entaxatierapporten', 
+          'Specificatie kruisposten',
+          'Lijst openstaande postenlijst crediteuren en debiteuren'
+        ]});
       }
       if (hasStocks === 'ja') {
-        documents.push('Specificatie effecten');
+        documents.push({ title: 'Voorraad', group: 'Voorraad', items: ['Voorraadspecificatie'] });
+      }
+      if (isVatPliable === 'ja') {
+        documents.push({ title: 'BTW', group: 'BTW', items: ['Alle ingediende aangiften omzetbelasting'] });
+      }
+      if (isBV === 'ja') {
+        documents.push({ title: 'Belastingen', group: 'Belastingen', items: [
+          'Aangiften dividendbelasting, notulen en uitkeringstest',
+          'Kopie van alle ontvangen (voorlopige) aanslagen vennootschapsbelasting'
+        ]});
+      }
+      if (isNewToneLoonAdmin === 'nee') {
+        documents.push({ title: 'Lonen', group: 'Lonen', items: [
+          'Jaarwerk',
+          'Overzicht van ingediende aangiften loonheffing',
+          'Specificatie reservering vakantiedagen en vakantiegeld'
+        ]});
+      }
+      if (hasCash === 'ja') {
+        documents.push({ title: 'Liquide middelen', group: 'Liquide middelen', items: ['Specificatie kasblad per balansdatum'] });
+      }
+      if (hasSecurities === 'ja') {
+        documents.push({ title: 'Financiële activa', group: 'Financiële activa', items: ['Financieel jaaroverzicht effecten'] });
       }
 
+      // Always include these
+      documents.push({ title: 'Liquide middelen', group: 'Liquide middelen', items: [
+        'Financieel jaaroverzicht van alle bankrekeningen'
+      ]});
+
+      documents.push({ title: 'Overige', group: 'Overige', items: [
+        'Specificatie overige schulden en overlopende passiva',
+        'Specificatie overige vorderingen en overlopende activa'
+      ]});
+
+      documents.push({ title: 'Schulden', group: 'Schulden', items: ['Financieel jaaroverzicht van alle leningen en financiële leaseverplichtingen'] });
+
+      displayDocumentList();
+    }
+
+    function displayDocumentList() {
       const documentList = document.getElementById('documentList');
+      let html = '<h3>Op te vragen documenten</h3>';
       if (documents.length > 0) {
-        documentList.innerHTML = '<h3>Op te vragen stukken</h3><ul>' +
-          documents.map(doc => `<li>${doc}</li>`).join('') +
-          '</ul>';
+        let groupedDocuments = documents.reduce((acc, doc) => {
+          if (!acc[doc.group]) acc[doc.group] = [];
+          acc[doc.group].push(...doc.items);
+          return acc;
+        }, {});
+
+        for (let group in groupedDocuments) {
+          html += `<h4>${group}</h4><ul>`;
+          groupedDocuments[group].forEach(item => {
+            html += `<li>${item}</li>`;
+          });
+          html += '</ul>';
+        }
       } else {
-        documentList.textContent = 'Geen op te vragen stukken.';
+        html = 'Geen documenten op te vragen.';
       }
+      documentList.innerHTML = html;
     }
   </script>
 </head>
