@@ -1,114 +1,26 @@
-import { useState } from "react";
-
-export default function DocumentRequestApp() {
-  const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState({
-    isNewCustomer: "",
-    isAdminHandled: "",
-    isAdminByNewTone: "",
-    hasStocks: "",
-    isVATLiable: "",
-    isBV: "",
-    isPayrollHandledByNewTone: "",
-    hasCash: "",
-    hasInventory: "",
-  });
-  const [documents, setDocuments] = useState([]);
-  const [showExplanation, setShowExplanation] = useState(null);
-
-  const questions = [
-    "Is het een nieuwe klant?",
-    "Wordt de administratie verzorgd door de klant?",
-    "Zal de administratie verzorgd worden door de NewTone?",
-    "Heeft de klant voorraad?",
-    "Is de klant BTW plichtig?",
-    "Betreft het een BV?",
-    "Verwerkt NewTone de loonadministratie?",
-    "Heeft de klant kas?",
-    "Heeft de klant effecten?",
-  ];
-
-  const explanations = [
-    { ja: "Nieuwe klant vereist veel documenten.", nee: "Geen extra documenten nodig." },
-    { ja: "Klant verzorgt administratie zelf.", nee: "NewTone zal helpen met administratie." },
-    { ja: "NewTone verzorgt administratie.", nee: "Klant blijft verantwoordelijk." },
-    { ja: "Documenten over voorraad nodig.", nee: "Geen voorraaddocumenten nodig." },
-    { ja: "BTW aangiften vereist.", nee: "Geen BTW documenten nodig." },
-    { ja: "Extra documenten voor BV vereist.", nee: "Geen BV documenten nodig." },
-    { ja: "NewTone verzorgt loonadministratie.", nee: "Klant verzorgt loonadministratie." },
-    { ja: "Kasadministratie vereist.", nee: "Geen kasadministratie nodig." },
-    { ja: "Effectendocumenten vereist.", nee: "Geen effectendocumenten nodig." },
-  ];
-
-  const handleAnswer = (questionIndex, answer) => {
-    const newAnswers = { ...answers };
-    const questionKeys = Object.keys(answers);
-    newAnswers[questionKeys[questionIndex]] = answer;
-    setAnswers(newAnswers);
-  };
-
-  const handleNextStep = () => {
-    const questionKeys = Object.keys(answers);
-    if (!answers[questionKeys[step - 1]]) {
-      alert("Beantwoord de vraag eerst a.u.b.");
-      return;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سؤال</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
     }
-    setStep(step + 1);
-    if (step === 9) {
-      updateDocuments();
+    h1 {
+      font-size: 3rem;
+      color: #333;
     }
-  };
-
-  const handlePreviousStep = () => {
-    if (step > 1) setStep(step - 1);
-  };
-
-  const updateDocuments = () => {
-    let docs = [];
-    if (answers.isNewCustomer === "ja") docs.push("Oprichtingsakte", "Statuten", "Aandeelhoudersregister");
-    if (answers.hasInventory === "ja") docs.push("Voorraadspecificatie");
-    if (answers.isVATLiable === "ja") docs.push("Omzetbelasting aangiften");
-    setDocuments(docs);
-  };
-
-  const isNextButtonDisabled = () => {
-    const questionKeys = Object.keys(answers);
-    return !answers[questionKeys[step - 1]];
-  };
-
-  return (
-    <div className="max-w-xl mx-auto p-8 space-y-6 bg-gray-100 rounded-xl shadow-lg">
-      <div className="w-full bg-gray-300 rounded-full h-2">
-        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${(step / 9) * 100}%` }}></div>
-      </div>
-      <p className="text-gray-700">{Math.round((step / 9) * 100)}% Voltooid</p>
-      {step <= 9 && (
-        <div>
-          <h2 className="text-lg font-semibold">Vraag {step}: {questions[step - 1]}</h2>
-          <button className="mr-4 bg-blue-500 text-white p-2 rounded" onClick={() => handleAnswer(step - 1, "ja")}>Ja</button>
-          <button className="bg-red-500 text-white p-2 rounded" onClick={() => handleAnswer(step - 1, "nee")}>Nee</button>
-          <button className="text-blue-600 underline mt-4" onClick={() => setShowExplanation(step - 1)}>Toelichting</button>
-          {showExplanation === step - 1 && (
-            <div className="mt-2 p-4 border rounded bg-gray-50">
-              <p><strong>Ja:</strong> {explanations[step - 1].ja}</p>
-              <p><strong>Nee:</strong> {explanations[step - 1].nee}</p>
-            </div>
-          )}
-          <div className="mt-6">
-            {step > 1 && <button onClick={handlePreviousStep} className="mr-4 bg-gray-500 text-white p-2 rounded">Vorige</button>}
-            <button onClick={handleNextStep} disabled={isNextButtonDisabled()} className={`bg-green-500 text-white p-2 rounded ${isNextButtonDisabled() ? 'opacity-50' : ''}`}>Volgende</button>
-          </div>
-        </div>
-      )}
-      {documents.length > 0 && (
-        <div>
-          <h2 className="text-xl font-bold">Op te vragen stukken</h2>
-          <ul className="list-disc pl-5">
-            {documents.map((doc, index) => <li key={index}>{doc}</li>)}
-          </ul>
-          <button onClick={() => alert('De documenten zijn naar de klant verstuurd!')} className="mt-4 bg-blue-600 text-white p-3 rounded">Versturen naar de klant</button>
-        </div>
-      )}
-    </div>
-  );
-}
+  </style>
+</head>
+<body>
+  <h1>تخليني؟</h1>
+</body>
+</html>
