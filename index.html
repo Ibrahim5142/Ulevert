@@ -1,170 +1,91 @@
-import { useState } from "react";
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documenten Opvragen</title>
+  <script>
+    let step = 1;
+    let isNewCustomer = '';
+    let isAdminHandled = '';
+    let hasStocks = '';
+    let documents = [];
 
-export default function DocumentRequestApp() {
-  const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState({
-    isNewCustomer: "",
-    isAdminHandled: "",
-    isAdminByNewTone: "",
-    hasStocks: "",
-    isVATLiable: "",
-    isBV: "",
-    isPayrollHandledByNewTone: "",
-    hasCash: "",
-    hasInventory: "",
-  });
-  const [documents, setDocuments] = useState([]);
+    function showQuestion() {
+      const question = document.getElementById('question');
+      const select = document.getElementById('answer');
+      const nextButton = document.getElementById('nextButton');
+      const documentList = document.getElementById('documentList');
+      documentList.innerHTML = ''; // Clear document list
 
-  const questions = [
-    "Is het een nieuwe klant?",
-    "Wordt de administratie verzorgd door de klant?",
-    "Zal de administratie verzorgd worden door de NewTone?",
-    "Heeft de klant voorraad?",
-    "Is de klant BTW plichtig?",
-    "Betreft het een BV?",
-    "Verwerkt NewTone de loonadministratie?",
-    "Heeft de klant kas?",
-    "Heeft de klant effecten?",
-  ];
-
-  const handleAnswer = (questionIndex, answer) => {
-    const newAnswers = { ...answers };
-    const questionKeys = Object.keys(answers);
-    newAnswers[questionKeys[questionIndex]] = answer;
-    setAnswers(newAnswers);
-  };
-
-  const handleNextStep = () => {
-    const questionKeys = Object.keys(answers);
-    if (!answers[questionKeys[step - 1]]) {
-      alert("Beantwoord de vraag eerst a.u.b.");
-      return;
+      switch (step) {
+        case 1:
+          question.textContent = 'Betreft het een nieuwe klant?';
+          break;
+        case 2:
+          question.textContent = 'Wordt de administratie door ons verzorgd?';
+          break;
+        case 3:
+          question.textContent = 'Heeft het bedrijf effecten?';
+          break;
+        default:
+          question.textContent = '';
+          select.style.display = 'none';
+          nextButton.style.display = 'none';
+          updateDocuments();
+          return;
+      }
+      select.style.display = 'inline';
+      nextButton.style.display = 'inline';
     }
 
-    if (step === 1 && answers.isNewCustomer === "ja") {
-      setStep(3);
-    } else if (step === 9) {
-      updateDocuments();
-    } else {
-      setStep(step + 1);
-    }
-  };
+    function handleNextStep() {
+      const answer = document.getElementById('answer').value;
+      if (!answer) {
+        alert('Beantwoord de vraag eerst a.u.b.');
+        return;
+      }
 
-  const handlePreviousStep = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
-  };
+      if (step === 1) isNewCustomer = answer;
+      if (step === 2) isAdminHandled = answer;
+      if (step === 3) hasStocks = answer;
 
-  const updateDocuments = () => {
-    let docs = [];
-
-    if (answers.isNewCustomer === "ja") {
-      docs.push(
-        "Wijzigingen organisatie",
-        "Oprichtingsakte/statuten",
-        "Aandeelhoudersregister",
-        "Overeenkomsten met aandeelhouders/verbonden partijen",
-        "Huurcontracten",
-        "Koop/verkoopovereenkomsten van betekenis",
-        "Leaseovereenkomsten",
-        "Financieringsovereenkomsten",
-        "Verzekeringsovereenkomsten",
-        "Pensioenreglement",
-        "Personeelsr
-        "Bonusregelingen met personeel",
-        "Beschikking fiscale eenheid vennootschapsbelasting",
-        "Beschikking fiscale eenheid omzetbelasting",
-        "Fiscale controlerapporten",
-        "Taxatierapporten",
-        "Aankoopaktes deelnemingen, gebouwen, etc.",
-        "Garantieverplichtingen / leveringsvoorwaarden"
-      );
-    }eglement",
-        "CAO",
-
-    if (answers.isAdminHandled === "nee") {
-      docs.push(
-        "Kolommenbalans (Auditfile)",
-        "Afschrijvingsstaat",
-        "Facturen/specificatie van (des)investeringen",
-        "OZB-aanslagen en taxatierapporten",
-        "Specificatie kruisposten",
-        "Openstaande postenlijst crediteuren en debiteuren"
-      );
+      step++;
+      showQuestion();
     }
 
-    if (answers.hasInventory === "ja") {
-      docs.push("Voorraadspecificatie");
+    function updateDocuments() {
+      if (isNewCustomer === 'ja') {
+        documents.push('Permanente stukken');
+      }
+      if (isAdminHandled === 'nee') {
+        documents.push('Auditfile', 'Afschrijvingsstaat', 'Facturen van investeringen');
+      }
+      if (hasStocks === 'ja') {
+        documents.push('Specificatie effecten');
+      }
+
+      const documentList = document.getElementById('documentList');
+      if (documents.length > 0) {
+        documentList.innerHTML = '<h3>Op te vragen stukken</h3><ul>' +
+          documents.map(doc => `<li>${doc}</li>`).join('') +
+          '</ul>';
+      } else {
+        documentList.textContent = 'Geen op te vragen stukken.';
+      }
     }
+  </script>
+</head>
+<body onload="showQuestion()">
+  <h1>Documenten Opvragen</h1>
+  <p id="question"></p>
+  <select id="answer">
+    <option value="">Selecteer</option>
+    <option value="ja">Ja</option>
+    <option value="nee">Nee</option>
+  </select>
+  <button id="nextButton" onclick="handleNextStep()">Volgende</button>
+  <div id="documentList"></div>
+</body>
+</html>
 
-    if (answers.isVATLiable === "ja") {
-      docs.push("Alle ingediende aangiften omzetbelasting");
-    }
-
-    if (answers.isBV === "ja") {
-      docs.push(
-        "Aangiften dividendbelasting",
-        "Notulen en uitkeringstest",
-        "Voorlopige aanslagen vennootschapsbelasting"
-      );
-    }
-
-    if (answers.isPayrollHandledByNewTone === "nee") {
-      docs.push(
-        "Jaarwerk",
-        "Ingediende aangiften loonheffing",
-        "Specificatie reservering vakantiedagen en vakantiegeld"
-      );
-    }
-
-    if (answers.hasCash === "ja") {
-      docs.push("Specificatie kasblad per balansdatum");
-    }
-
-    if (answers.hasStocks === "ja") {
-      docs.push("Financieel jaaroverzicht effecten per balansdatum");
-    }
-
-    docs.push(
-      "Financieel jaaroverzicht van alle bankrekeningen",
-      "Specificatie overige schulden en overlopende passiva",
-      "Specificatie overige vorderingen en overlopende activa",
-      "Financieel jaaroverzicht van alle leningen en financiële leaseverplichtingen"
-    );
-
-    setDocuments(docs);
-  };
-
-  return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>
-        <span style={{ color: "green" }}>U</span>
-        <span style={{ color: "black" }}>levert</span>
-      </h1>
-      {step <= 9 && <h2>{questions[step - 1]}</h2>}
-      {step <= 9 && (
-        <div>
-          <button onClick={() => handleAnswer(step - 1, "ja")} disabled={answers[Object.keys(answers)[step - 1]] === "ja"}>Ja</button>
-          <button onClick={() => handleAnswer(step - 1, "nee")} disabled={answers[Object.keys(answers)[step - 1]] === "nee"}>Nee</button>
-        </div>
-      )}
-
-      {step <= 9 && <p>Pagina {step}/9</p>}
-
-      {step > 9 && documents.length > 0 && (
-        <div>
-          <h2>Op te vragen stukken</h2>
-          <ul>
-            {documents.map((doc, index) => (
-              <li key={index}>{doc}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {step > 1 && <button onClick={handlePreviousStep}>Vorige</button>}
-      {step <= 9 && <button onClick={handleNextStep}>Volgende</button>}
-    </div>
-  );
-}
