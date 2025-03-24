@@ -4,12 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Documenten Opvragen</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    #container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 400px;
+    }
+    h1, p, select, button {
+      margin-bottom: 20px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
   <script>
     let step = 1;
-    let isNewCustomer = '';
-    let isAdminHandled = '';
-    let hasStocks = '';
+    let answers = {};
     let documents = [];
+
+    const questions = [
+      "Is het een nieuwe klant?",
+      "Wordt de administratie verzorgd door de klant?",
+      "Zal de administratie verzorgd worden door de NewTone?",
+      "Heeft de klant voorraad?",
+      "Is de klant BTW plichtig?",
+      "Betreft het een BV?",
+      "Verwerkt NewTone de loonadministratie?",
+      "Heeft de klant kas?",
+      "Heeft de klant effecten?"
+    ];
 
     function showQuestion() {
       const question = document.getElementById('question');
@@ -18,23 +52,16 @@
       const documentList = document.getElementById('documentList');
       documentList.innerHTML = ''; // Clear document list
 
-      switch (step) {
-        case 1:
-          question.textContent = 'Betreft het een nieuwe klant?';
-          break;
-        case 2:
-          question.textContent = 'Wordt de administratie door ons verzorgd?';
-          break;
-        case 3:
-          question.textContent = 'Heeft het bedrijf effecten?';
-          break;
-        default:
-          question.textContent = '';
-          select.style.display = 'none';
-          nextButton.style.display = 'none';
-          updateDocuments();
-          return;
+      if (step > 9) {
+        updateDocuments();
+        return;
       }
+
+      // Vraag overslaan op basis van voorwaarden
+      if (step === 2 && answers[1] === 'ja') step = 3;
+      if (step === 3 && answers[1] === 'nee') step = 4;
+
+      question.textContent = `Vraag ${step}: ${questions[step - 1]}`;
       select.style.display = 'inline';
       nextButton.style.display = 'inline';
     }
@@ -45,46 +72,53 @@
         alert('Beantwoord de vraag eerst a.u.b.');
         return;
       }
-
-      if (step === 1) isNewCustomer = answer;
-      if (step === 2) isAdminHandled = answer;
-      if (step === 3) hasStocks = answer;
-
+      answers[step] = answer;
       step++;
       showQuestion();
     }
 
     function updateDocuments() {
-      if (isNewCustomer === 'ja') {
-        documents.push('Permanente stukken');
-      }
-      if (isAdminHandled === 'nee') {
-        documents.push('Auditfile', 'Afschrijvingsstaat', 'Facturen van investeringen');
-      }
-      if (hasStocks === 'ja') {
-        documents.push('Specificatie effecten');
+      documents = [
+        "Financieel jaaroverzicht van alle bankrekeningen",
+        "Specificatie overige schulden en overlopende passiva",
+        "Specificatie overige vorderingen en overlopende activa",
+        "Financieel jaaroverzicht van alle leningen en financiële leaseverplichtingen"
+      ];
+
+      if (answers[1] === 'ja') {
+        documents.push("Wijzigingen organisatie", "Oprichtingsakte/statuten", "Aandeelhoudersregister", "Overeenkomsten met aandeelhouders/verbonden partijen", "Huurcontracten", "Koop/verkoopovereenkomsten van betekenis", "Leaseovereenkomsten", "Financieringsovereenkomsten", "Verzekeringsovereenkomsten");
       }
 
-      const documentList = document.getElementById('documentList');
-      if (documents.length > 0) {
-        documentList.innerHTML = '<h3>Op te vragen stukken</h3><ul>' +
-          documents.map(doc => `<li>${doc}</li>`).join('') +
-          '</ul>';
-      } else {
-        documentList.textContent = 'Geen op te vragen stukken.';
+      if (answers[2] === 'nee' || answers[3] === 'nee') {
+        documents.push("Kolommenbalans (Auditfile)", "Afschrijvingsstaat", "Facturen van investeringen", "OZB-aanslagen en taxatierapporten", "Specificatie kruisposten", "Openstaande postenlijst crediteuren en debiteuren");
       }
+
+      if (answers[4] === 'ja') documents.push("Voorraadspecificatie");
+      if (answers[5] === 'ja') documents.push("Alle ingediende aangiften omzetbelasting");
+      if (answers[6] === 'ja') documents.push("Aangiften dividendbelasting", "Notulen en uitkeringstest", "Voorlopige aanslagen vennootschapsbelasting");
+      if (answers[7] === 'nee') documents.push("Jaarwerk", "Aangiften loonheffing", "Specificatie reservering vakantiedagen en vakantiegeld");
+      if (answers[8] === 'ja') documents.push("Specificatie kasblad per balansdatum");
+      if (answers[9] === 'ja') documents.push("Financieel jaaroverzicht effecten per balansdatum");
+
+      const documentList = document.getElementById('documentList');
+      documentList.innerHTML = '<h3>Op te vragen stukken</h3><ul>' + documents.map(doc => `<li>${doc}</li>`).join('') + '</ul>';
     }
   </script>
 </head>
-<body onload="showQuestion()">
-  <h1>Documenten Opvragen</h1>
-  <p id="question"></p>
-  <select id="answer">
-    <option value="">Selecteer</option>
-    <option value="ja">Ja</option>
-    <option value="nee">Nee</option>
-  </select>
-  <button id="nextButton" onclick="handleNextStep()">Volgende</button>
-  <div id="documentList"></div>
+<body>
+  <div id="container">
+    <h1>Documenten Opvragen</h1>
+    <p id="question"></p>
+    <select id="answer">
+      <option value="">Selecteer</option>
+      <option value="ja">Ja</option>
+      <option value="nee">Nee</option>
+    </select>
+    <button id="nextButton" onclick="handleNextStep()">Volgende</button>
+    <div id="documentList"></div>
+  </div>
+  <script>
+    showQuestion();
+  </script>
 </body>
 </html>
