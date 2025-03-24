@@ -1,77 +1,90 @@
-import { useState } from "react";
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documenten Opvragen</title>
+  <script>
+    let step = 1;
+    let isNewCustomer = '';
+    let isAdminHandled = '';
+    let hasStocks = '';
+    let documents = [];
 
-export default function DocumentRequestApp() {
-  const [step, setStep] = useState(1);
-  const [isNewCustomer, setIsNewCustomer] = useState("");
-  const [isAdminHandled, setIsAdminHandled] = useState("");
-  const [hasStocks, setHasStocks] = useState("");
-  const [documents, setDocuments] = useState([]);
+    function showQuestion() {
+      const question = document.getElementById('question');
+      const select = document.getElementById('answer');
+      const nextButton = document.getElementById('nextButton');
+      const documentList = document.getElementById('documentList');
+      documentList.innerHTML = ''; // Clear document list
 
-  const handleNextStep = () => {
-    setStep(step + 1);
-  };
-
-  const updateDocuments = () => {
-    let docs = [];
-    if (isNewCustomer === "ja") {
-      docs.push("Permanente stukken");
+      switch (step) {
+        case 1:
+          question.textContent = 'Betreft het een nieuwe klant?';
+          break;
+        case 2:
+          question.textContent = 'Wordt de administratie door ons verzorgd?';
+          break;
+        case 3:
+          question.textContent = 'Heeft het bedrijf effecten?';
+          break;
+        default:
+          question.textContent = '';
+          select.style.display = 'none';
+          nextButton.style.display = 'none';
+          updateDocuments();
+          return;
+      }
+      select.style.display = 'inline';
+      nextButton.style.display = 'inline';
     }
-    if (isAdminHandled === "nee") {
-      docs.push("Auditfile", "Afschrijvingsstaat", "Facturen van investeringen");
+
+    function handleNextStep() {
+      const answer = document.getElementById('answer').value;
+      if (!answer) {
+        alert('Beantwoord de vraag eerst a.u.b.');
+        return;
+      }
+
+      if (step === 1) isNewCustomer = answer;
+      if (step === 2) isAdminHandled = answer;
+      if (step === 3) hasStocks = answer;
+
+      step++;
+      showQuestion();
     }
-    if (hasStocks === "ja") {
-      docs.push("Specificatie effecten");
+
+    function updateDocuments() {
+      if (isNewCustomer === 'ja') {
+        documents.push('Permanente stukken');
+      }
+      if (isAdminHandled === 'nee') {
+        documents.push('Auditfile', 'Afschrijvingsstaat', 'Facturen van investeringen');
+      }
+      if (hasStocks === 'ja') {
+        documents.push('Specificatie effecten');
+      }
+
+      const documentList = document.getElementById('documentList');
+      if (documents.length > 0) {
+        documentList.innerHTML = '<h3>Op te vragen stukken</h3><ul>' +
+          documents.map(doc => `<li>${doc}</li>`).join('') +
+          '</ul>';
+      } else {
+        documentList.textContent = 'Geen op te vragen stukken.';
+      }
     }
-    setDocuments(docs);
-  };
-
-  return (
-    <div className="max-w-lg mx-auto p-6 space-y-4 bg-gray-100 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold text-center">Documenten Opvragen</h1>
-      
-      {step === 1 && (
-        <div className="p-4 space-y-2 border rounded bg-white">
-          <label className="block font-medium">Betreft het een nieuwe klant?</label>
-          <select className="w-full p-2 border rounded" onChange={(e) => { setIsNewCustomer(e.target.value); handleNextStep(); }}>
-            <option value="">Selecteer</option>
-            <option value="ja">Ja</option>
-            <option value="nee">Nee</option>
-          </select>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="p-4 space-y-2 border rounded bg-white">
-          <label className="block font-medium">Wordt de administratie door ons verzorgd?</label>
-          <select className="w-full p-2 border rounded" onChange={(e) => { setIsAdminHandled(e.target.value); handleNextStep(); }}>
-            <option value="">Selecteer</option>
-            <option value="ja">Ja</option>
-            <option value="nee">Nee</option>
-          </select>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div className="p-4 space-y-2 border rounded bg-white">
-          <label className="block font-medium">Heeft het bedrijf effecten?</label>
-          <select className="w-full p-2 border rounded" onChange={(e) => { setHasStocks(e.target.value); handleNextStep(); updateDocuments(); }}>
-            <option value="">Selecteer</option>
-            <option value="ja">Ja</option>
-            <option value="nee">Nee</option>
-          </select>
-        </div>
-      )}
-      
-      {step > 3 && documents.length > 0 && (
-        <div className="mt-6 p-4 border rounded bg-white">
-          <h2 className="text-xl font-bold">Op te vragen stukken</h2>
-          <ul className="list-disc list-inside">
-            {documents.map((doc, index) => (
-              <li key={index}>{doc}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
+  </script>
+</head>
+<body onload="showQuestion()">
+  <h1>Documenten Opvragen</h1>
+  <p id="question"></p>
+  <select id="answer">
+    <option value="">Selecteer</option>
+    <option value="ja">Ja</option>
+    <option value="nee">Nee</option>
+  </select>
+  <button id="nextButton" onclick="handleNextStep()">Volgende</button>
+  <div id="documentList"></div>
+</body>
+</html>
