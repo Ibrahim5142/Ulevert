@@ -1,0 +1,236 @@
+import { useState } from "react";
+
+export default function DocumentRequestApp() {
+  const [step, setStep] = useState(1);
+  const [answers, setAnswers] = useState({
+    isNewCustomer: "",
+    isAdminHandled: "",
+    isAdminByNewTone: "",
+    hasStocks: "",
+    isVATLiable: "",
+    isBV: "",
+    isPayrollHandledByNewTone: "",
+    hasCash: "",
+    hasInventory: "",
+  });
+  const [documents, setDocuments] = useState([]);
+  const [showExplanation, setShowExplanation] = useState(null); // State voor de toelichting
+
+  const questions = [
+    "Is het een nieuwe klant?",
+    "Wordt de administratie verzorgd door de klant?",
+    "Zal de administratie verzorgd worden door de NewTone?",
+    "Heeft de klant voorraad?",
+    "Is de klant BTW plichtig?",
+    "Betreft het een BV?",
+    "Verwerkt NewTone de loonadministratie?",
+    "Heeft de klant kas?",
+    "Heeft de klant effecten?",
+  ];
+
+  const explanations = [
+    {
+      ja: "Als het een nieuwe klant is, moeten alle documenten zoals oprichtingsakten, aandeelhoudersregister, enz. worden verzameld.",
+      nee: "Als het geen nieuwe klant is, dan zijn de documenten die bij een nieuwe klant horen niet nodig."
+    },
+    {
+      ja: "Als de administratie door de klant wordt verzorgd, moet de klant zelf zorgdragen voor alle administratieve documenten.",
+      nee: "Als de administratie niet door de klant wordt verzorgd, moet NewTone de administratie verzorgen."
+    },
+    {
+      ja: "Als de administratie door NewTone wordt verzorgd, zorgt NewTone voor alle administratieve zaken.",
+      nee: "Als de administratie niet door NewTone wordt verzorgd, zal de klant de administratie blijven verzorgen."
+    },
+    {
+      ja: "Als de klant voorraad heeft, moeten voorraadspecificaties worden toegevoegd.",
+      nee: "Als de klant geen voorraad heeft, hoeft er geen voorraadspecificatie toegevoegd te worden."
+    },
+    {
+      ja: "Als de klant BTW-plichtig is, moeten alle ingediende aangiften omzetbelasting worden verzameld.",
+      nee: "Als de klant niet BTW-plichtig is, zijn de ingediende aangiften omzetbelasting niet nodig."
+    },
+    {
+      ja: "Als het een BV betreft, moeten specifieke documenten zoals dividendbelastingaangiften en notulen van de BV worden verzameld.",
+      nee: "Als het geen BV betreft, zijn de documenten die specifiek voor een BV gelden niet nodig."
+    },
+    {
+      ja: "Als NewTone de loonadministratie verzorgt, moeten documenten zoals jaarwerk en ingediende aangiften loonheffing worden verzameld.",
+      nee: "Als NewTone de loonadministratie niet verzorgt, zijn deze documenten niet nodig."
+    },
+    {
+      ja: "Als de klant kas heeft, moet de kasadministratie per balansdatum worden verzameld.",
+      nee: "Als de klant geen kas heeft, is er geen kasadministratie nodig."
+    },
+    {
+      ja: "Als de klant effecten heeft, moet het financieel jaaroverzicht van de effecten per balansdatum worden verzameld.",
+      nee: "Als de klant geen effecten heeft, is er geen financieel jaaroverzicht nodig."
+    }
+  ];
+
+  const handleAnswer = (questionIndex, answer) => {
+    const newAnswers = { ...answers };
+    const questionKeys = Object.keys(answers);
+    newAnswers[questionKeys[questionIndex]] = answer;
+    setAnswers(newAnswers);
+  };
+
+  const handleNextStep = () => {
+    // Zorg ervoor dat de gebruiker niet doorgaat zonder een antwoord
+    const questionKeys = Object.keys(answers);
+    if (!answers[questionKeys[step - 1]]) {
+      alert("Beantwoord de vraag eerst a.u.b.");
+      return;
+    }
+
+    // Ga naar de volgende stap
+    setStep(step + 1);
+
+    // Genereer documenten bij de laatste vraag
+    if (step === 9) {
+      updateDocuments();
+    }
+  };
+
+  const handlePreviousStep = () => {
+    setStep(step - 1);
+  };
+
+  const updateDocuments = () => {
+    let docs = [];
+
+    if (answers.isNewCustomer === "ja") {
+      docs.push("Wijzigingen organisatie", "Oprichtingsakte/statuten", "Aandeelhoudersregister", "Overeenkomsten met aandeelhouders/verbonden partijen", "Huurcontracten", "Koop/verkoopovereenkomsten van betekenis", "Leaseovereenkomsten", "Financieringsovereenkomsten", "Verzekeringsovereenkomsten", "Pensioenreglement", "Personeelsreglement", "CAO", "Bonusregelingen met personeel", "Beschikking fiscale eenheid vennootschapsbelasting", "Beschikking fiscale eenheid omzetbelasting", "Fiscale controlerapporten", "Taxatierapporten", "Aankoopaktes deelnemingen, gebouwen, etc.", "Garantieverplichtingen / leveringsvoorwaarden");
+    }
+
+    if (answers.isAdminHandled === "nee") {
+      docs.push("Kolommenbalans (Auditfile)", "Afschrijvingsstaat", "Facturen/specificatie van (des)investeringen", "OZB-aanslagen en taxatierapporten", "Specificatie kruisposten", "Openstaande postenlijst crediteuren en debiteuren");
+    }
+
+    if (answers.isAdminByNewTone === "nee") {
+      docs.push("Kolommenbalans (Auditfile)", "Afschrijvingsstaat", "Facturen/specificatie van (des)investeringen", "OZB-aanslagen en taxatierapporten", "Specificatie kruisposten", "Openstaande postenlijst crediteuren en debiteuren");
+    }
+
+    if (answers.hasInventory === "ja") {
+      docs.push("Voorraadspecificatie");
+    }
+
+    if (answers.isVATLiable === "ja") {
+      docs.push("Alle ingediende aangiften omzetbelasting");
+    }
+
+    if (answers.isBV === "ja") {
+      docs.push("Aangiften dividendbelasting", "Notulen en uitkeringstest", "Voorlopige aanslagen vennootschapsbelasting");
+    }
+
+    if (answers.isPayrollHandledByNewTone === "nee") {
+      docs.push("Jaarwerk", "Ingediende aangiften loonheffing", "Specificatie reservering vakantiedagen en vakantiegeld");
+    }
+
+    if (answers.hasCash === "ja") {
+      docs.push("Specificatie kasblad per balansdatum");
+    }
+
+    if (answers.hasStocks === "ja") {
+      docs.push("Financieel jaaroverzicht effecten per balansdatum");
+    }
+
+    docs.push("Financieel jaaroverzicht van alle bankrekeningen", "Specificatie overige schulden en overlopende passiva", "Specificatie overige vorderingen en overlopende activa", "Financieel jaaroverzicht van alle leningen en financiële leaseverplichtingen");
+
+    setDocuments(docs);
+  };
+
+  const handleSendToClient = () => {
+    alert("De documenten zijn naar de klant verstuurd!");
+  };
+
+  const isNextButtonDisabled = () => {
+    const questionKeys = Object.keys(answers);
+    return !answers[questionKeys[step - 1]]; // Zet de knop uit als er geen antwoord is
+  };
+
+  return (
+    <div className="max-w-xl mx-auto p-8 space-y-6 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl shadow-xl">
+      {/* Voortgangsbalk met percentage */}
+      <div className="w-full bg-gray-200 h-2 mb-4 rounded-full">
+        <div
+          className="bg-blue-600 h-2 rounded-full"
+          style={{ width: `${(step / 9) * 100}%` }}
+        ></div>
+      </div>
+      <div className="text-center text-lg font-semibold text-gray-700">
+        {Math.round((step / 9) * 100)}% Voltooid
+      </div>
+
+      {/* Vragen en knoppen */}
+      {step <= 9 && (
+        <div className="p-6 space-y-4 bg-white rounded-lg shadow-md">
+          <label className="block text-lg font-semibold text-gray-700">
+            Vraag {step}: {questions[step - 1]}
+          </label>
+          <div className="flex space-x-4">
+            <button
+              className={`px-4 py-2 border rounded-md ${answers[Object.keys(answers)[step - 1]] === "ja" ? "bg-blue-600 text-white" : "text-blue-600"}`}
+              onClick={() => handleAnswer(step - 1, "ja")}
+            >
+              Ja
+            </button>
+            <button
+              className={`px-4 py-2 border rounded-md ${answers[Object.keys(answers)[step - 1]] === "nee" ? "bg-blue-600 text-white" : "text-blue-600"}`}
+              onClick={() => handleAnswer(step - 1, "nee")}
+            >
+              Nee
+            </button>
+          </div>
+          {/* Toelichting knop altijd zichtbaar */}
+          <button
+            onClick={() => setShowExplanation(step - 1)}
+            className="mt-2 text-blue-600"
+          >
+            Toelichting
+          </button>
+          {showExplanation === step - 1 && (
+            <div className="mt-4 p-4 border bg-gray-100 rounded-lg">
+              <p><strong>Ja:</strong> {explanations[step - 1].ja}</p>
+              <p><strong>Nee:</strong> {explanations[step - 1].nee}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Volgende knop */}
+      <div className="flex justify-between">
+        <button
+          onClick={handlePreviousStep}
+          disabled={step === 1}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+        >
+          Vorige
+        </button>
+        <button
+          onClick={handleNextStep}
+          disabled={isNextButtonDisabled()}
+          className={`${
+            isNextButtonDisabled()
+              ? "bg-gray-300 text-gray-700"
+              : "bg-blue-600 text-white"
+          } px-4 py-2 rounded-md`}
+        >
+          Volgende
+        </button>
+      </div>
+
+      {/* Lijst van documenten */}
+      {documents.length > 0 && (
+        <div className="mt-6 p-4 border rounded bg-white">
+          <h2 className="text-xl font-bold">Op te vragen stukken</h2>
+          <ul className="list-disc list-inside">
+            {documents.map((doc, index) => (
+              <li key={index}>{doc}</li>
+            ))}
+          </ul>
+          <button onClick={handleSendToClient} className="mt-4 bg-green-600 text-white p-3 rounded-md">Versturen naar de klant</button>
+        </div>
+      )}
+    </div>
+  );
+}
