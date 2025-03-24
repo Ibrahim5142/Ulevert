@@ -4,39 +4,107 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Documenten Opvragen</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+      position: relative;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      position: relative;
+    }
+    .progress-container {
+      position: absolute;
+      top: 50%;
+      left: -40px;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+    }
+    .progress-bar {
+      width: 100%;
+      background-color: #28a745;
+      border-radius: 10px;
+    }
+    select, button {
+      margin-top: 10px;
+    }
+    #documentList {
+      margin-top: 20px;
+      text-align: left;
+    }
+    h1 {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #ulevert {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 30px;
+    }
+    #ulevert .green-u {
+      color: #28a745;
+      font-weight: bold;
+    }
+    #footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #28a745;
+      height: 40px;
+    }
+    button {
+      width: 100px;
+    }
+  </style>
   <script>
     let step = 1;
-    let isNewCustomer = '';
-    let isAdminHandled = '';
-    let hasStocks = '';
+    let answers = {};
     let documents = [];
 
-    function showQuestion() {
-      const question = document.getElementById('question');
-      const select = document.getElementById('answer');
-      const nextButton = document.getElementById('nextButton');
-      const documentList = document.getElementById('documentList');
-      documentList.innerHTML = ''; // Clear document list
+    const questions = [
+      "Is het een nieuwe klant?",
+      "Wordt de administratie verzorgd door de klant?",
+      "Zal de administratie verzorgd worden door NewTone?",
+      "Heeft de klant voorraad?",
+      "Is de klant BTW-plichtig?",
+      "Betreft het een BV?",
+      "Verwerkt Newtone de loonadministratie?",
+      "Heeft de klant kas?",
+      "Heeft de klant effecten?"
+    ];
 
-      switch (step) {
-        case 1:
-          question.textContent = 'Betreft het een nieuwe klant?';
-          break;
-        case 2:
-          question.textContent = 'Wordt de administratie door ons verzorgd?';
-          break;
-        case 3:
-          question.textContent = 'Heeft het bedrijf effecten?';
-          break;
-        default:
-          question.textContent = '';
-          select.style.display = 'none';
-          nextButton.style.display = 'none';
-          updateDocuments();
-          return;
+    function showQuestion() {
+      if (step > questions.length) {
+        document.getElementById('question').textContent = "";
+        document.getElementById('answer').style.display = 'none';
+        document.getElementById('nextButton').style.display = 'none';
+        document.getElementById('prevButton').style.display = 'none';
+        updateDocuments();
+        return;
       }
-      select.style.display = 'inline';
-      nextButton.style.display = 'inline';
+      document.getElementById('question').textContent = questions[step - 1];
+      document.getElementById('prevButton').style.display = step > 1 ? 'inline' : 'none';
+      document.getElementById('answer').style.display = 'inline';
+      document.getElementById('nextButton').style.display = 'inline';
     }
 
     function handleNextStep() {
@@ -45,47 +113,69 @@
         alert('Beantwoord de vraag eerst a.u.b.');
         return;
       }
-
-      if (step === 1) isNewCustomer = answer;
-      if (step === 2) isAdminHandled = answer;
-      if (step === 3) hasStocks = answer;
-
+      answers[step] = answer;
       step++;
       showQuestion();
     }
 
+    function handlePrevStep() {
+      step--;
+      showQuestion();
+    }
+
     function updateDocuments() {
-      if (isNewCustomer === 'ja') {
+      if (answers[1] === 'ja') {
         documents.push('Permanente stukken');
       }
-      if (isAdminHandled === 'nee') {
-        documents.push('Auditfile', 'Afschrijvingsstaat', 'Facturen van investeringen');
+      if (answers[2] === 'nee' || answers[3] === 'nee') {
+        documents.push('Kolommenbalans', 'Afschrijvingsstaat', 'Facturen/specificatie van (des)investeringen');
       }
-      if (hasStocks === 'ja') {
-        documents.push('Specificatie effecten');
+      if (answers[4] === 'ja') {
+        documents.push('Voorraadspecificatie');
       }
-
+      if (answers[5] === 'ja') {
+        documents.push('Alle ingediende aangiften omzetbelasting');
+      }
+      if (answers[6] === 'ja') {
+        documents.push('Aangiften dividendbelasting', 'Notulen', 'Uitkeringstest');
+      }
+      if (answers[7] === 'nee') {
+        documents.push('Jaarwerk loonadministratie', 'Overzicht ingediende aangiften loonheffing');
+      }
+      if (answers[8] === 'ja') {
+        documents.push('Specificatie kasblad per balansdatum');
+      }
+      if (answers[9] === 'ja') {
+        documents.push('Financieel jaaroverzicht effecten per balansdatum');
+      }
+      
       const documentList = document.getElementById('documentList');
-      if (documents.length > 0) {
-        documentList.innerHTML = '<h3>Op te vragen stukken</h3><ul>' +
-          documents.map(doc => `<li>${doc}</li>`).join('') +
-          '</ul>';
-      } else {
-        documentList.textContent = 'Geen op te vragen stukken.';
-      }
+      documentList.innerHTML = documents.length > 0 
+        ? '<h3>Op te vragen stukken</h3><ul>' + documents.map(doc => `<li>${doc}</li>`).join('') + '</ul>' 
+        : 'Geen op te vragen stukken.';
     }
   </script>
 </head>
 <body onload="showQuestion()">
+  <div id="ulevert">
+    <span class="green-u">U</span>levert
+  </div>
   <h1>Documenten Opvragen</h1>
-  <p id="question"></p>
-  <select id="answer">
-    <option value="">Selecteer</option>
-    <option value="ja">Ja</option>
-    <option value="nee">Nee</option>
-  </select>
-  <button id="nextButton" onclick="handleNextStep()">Volgende</button>
-  <div id="documentList"></div>
+  <div class="container">
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <p id="question"></p>
+    <select id="answer">
+      <option value="">Selecteer</option>
+      <option value="ja">Ja</option>
+      <option value="nee">Nee</option>
+    </select>
+    <br />
+    <button id="prevButton" onclick="handlePrevStep()">Vorige</button>
+    <button id="nextButton" onclick="handleNextStep()">Volgende</button>
+    <div id="documentList"></div>
+  </div>
+  <div id="footer"></div>
 </body>
 </html>
-
