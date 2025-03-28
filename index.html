@@ -215,14 +215,25 @@
       if (isNewCustomer === 'ja') {
         documents.push(
           { title: 'Permanente stukken', group: 'Permanente stukken', items: [
+            'Wijzigingen organisatie',
             'Oprichtingsakte/statuten',
+            'Aandeelhoudersregister',
             'Overeenkomsten met aandeelhouders/verbonden partijen',
             'Huurcontracten',
+            'Koop/verkoopovereenkomsten van betekenis',
             'Leaseovereenkomsten (financieel en operationeel)',
             'Financieringsovereenkomsten / rekening-courantfaciliteiten',
             'Verzekeringsovereenkomsten',
+            'Pensioenreglement',
+            'Personeelsreglement',
+            'CAO',
+            'Bonusregelingen met personeel',
+            'Beschikking fiscale eenheid vennootschapsbelasting',
+            'Beschikking fiscale eenheid omzetbelasting',
+            'Fiscale controlerapporten',
             'Taxatierapporten',
             'Aankoopaktes deelnemingen, gebouwen, etc.',
+            'Garantieverplichtingen / leveringsvoorwaarden'
           ]}
         );
       }
@@ -267,7 +278,7 @@
         'Financieel jaaroverzicht van alle bankrekeningen'
       ]});
 
-      documents.push({ title: 'Overige', group: 'Overige', items: [
+      documents.push({ title: 'Overige', group: 'Indien van toepassing', items: [
         'Specificatie overige schulden en overlopende passiva',
         'Specificatie overige vorderingen en overlopende activa'
       ]});
