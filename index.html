@@ -113,30 +113,26 @@
           explanation = 'Ja: Geen documenten nodig.\nNee: Kolommenbalans, Afschrijvingsstaat, Facturen van investeringen, etc. worden opgevraagd.';
           break;
         case 3:
-          question.textContent = 'Zal de administratie verzorgd worden door Newtone?';
-          explanation = 'Ja: Nieuwe documenten worden mogelijk opgevraagd.\nNee: Kolommenbalans, Afschrijvingsstaat, Facturen van investeringen worden opgevraagd.';
-          break;
-        case 4:
           question.textContent = 'Heeft de klant voorraad?';
           explanation = 'Ja: De voorraadspecificatie wordt opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
-        case 5:
+        case 4:
           question.textContent = 'Is de klant BTW-plichtig?';
           explanation = 'Ja: Alle ingediende aangiften omzetbelasting worden opgevraagd.\nNee: Ga door naar de volgnede vraag.';
           break;
-        case 6:
+        case 5:
           question.textContent = 'Betreft het een BV?';
           explanation = 'Ja: Aangiften dividendbelasting, vennootschapsbelasting, etc. worden opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
-        case 7:
+        case 6:
           question.textContent = 'Verzorgt Newtone de loonadministratie voor de klant?';
           explanation = 'Ja: Geen extra documenten nodig.\nNee: Jaarwerk, ingediende aangiften loonheffing, en specificatie reserveringen worden opgevraagd.';
           break;
-        case 8:
+        case 7:
           question.textContent = 'Heeft de klant kas?';
           explanation = 'Ja: Specificatie kasblad per balansdatum wordt opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
-        case 9:
+        case 8:
           question.textContent = 'Heeft de klant effecten?';
           explanation = '.';
           break;
@@ -164,47 +160,45 @@
         return;
       }
 
-      if (step === 1) {
-        isNewCustomer = answer;
-        if (answer === 'ja') {
-          step = 3; // Sla vraag 2 over en ga direct naar vraag 3
-        } else {
-          step = 2; // Ga naar vraag 2 en sla vraag 3 over
-        }
-      } else if (step === 2) {
-        isAdminHandled = answer;
-        step = 4; // Ga naar vraag 4
-      } else if (step === 3) {
-        hasStocks = answer;
-        step = 4; // Ga naar vraag 4
-      } else if (step === 4) {
-        hasStocks = answer;
-        step = 5;
-      } else if (step === 5) {
-        isVatPliable = answer;
-        step = 6;
-      } else if (step === 6) {
-        isBV = answer;
-        step = 7;
-      } else if (step === 7) {
-        isNewToneLoonAdmin = answer;
-        step = 8;
-      } else if (step === 8) {
-        hasCash = answer;
-        step = 9;
-      } else {
-        hasSecurities = answer;
-        step = 10;
-      }
+  if (step === 1) {
+  isNewCustomer = answer;
+  if (answer === 'ja') {
+    step = 2; // Ga naar vraag 2
+  } else {
+    step = 2; // Blijf bij vraag 2 voor consistentie
+  }
+} else if (step === 2) {
+  isAdminHandled = answer;
+  step = 3; // Ga naar vraag 3
+} else if (step === 3) {
+  hasStocks = answer;
+  step = 4; // Ga naar vraag 4
+} else if (step === 4) {
+  isVatPliable = answer;
+  step = 5; // Ga naar vraag 5
+} else if (step === 5) {
+  isBV = answer;
+  step = 6; // Ga naar vraag 6
+} else if (step === 6) {
+  isNewToneLoonAdmin = answer;
+  step = 7; // Ga naar vraag 7
+} else if (step === 7) {
+  hasCash = answer;
+  step = 8; // Ga naar vraag 8
+} else if (step === 8) {
+  hasSecurities = answer;
+  step = 9; // Ga naar vraag 9
+}
+
 
       showQuestion();
     }
 
     function handlePrevStep() {
-      if (step === 3 && isNewCustomer === 'ja') {
+      if (step === 2 && isNewCustomer === 'ja') {
         step = 1; // Ga terug naar vraag 1
-      } else if (step === 4) {
-        step = isNewCustomer === 'ja' ? 3 : 2; // Terug naar de juiste vorige vraag
+      } else if (step === 3) {
+        step = isNewCustomer === 'ja' ? 2 : 1; // Terug naar de juiste vorige vraag
       } else {
         step--;
       }
