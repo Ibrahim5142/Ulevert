@@ -118,15 +118,15 @@
           break;
         case 4:
           question.textContent = 'Heeft de klant voorraad?';
-          explanation = 'Ja: De voorraadspecificatie wordt opgevraagd.\nNee: Ga door naar vraag 5.';
+          explanation = 'Ja: De voorraadspecificatie wordt opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
         case 5:
           question.textContent = 'Is de klant BTW-plichtig?';
-          explanation = 'Ja: Alle ingediende aangiften omzetbelasting worden opgevraagd.\nNee: Ga door naar vraag 6.';
+          explanation = 'Ja: Alle ingediende aangiften omzetbelasting worden opgevraagd.\nNee: Ga door naar de volgnede vraag.';
           break;
         case 6:
           question.textContent = 'Betreft het een BV?';
-          explanation = 'Ja: Aangiften dividendbelasting, vennootschapsbelasting, etc. worden opgevraagd.\nNee: Ga door naar vraag 7.';
+          explanation = 'Ja: Aangiften dividendbelasting, vennootschapsbelasting, etc. worden opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
         case 7:
           question.textContent = 'Verzorgt Newtone de loonadministratie voor de klant?';
@@ -134,11 +134,11 @@
           break;
         case 8:
           question.textContent = 'Heeft de klant kas?';
-          explanation = 'Ja: Specificatie kasblad per balansdatum wordt opgevraagd.\nNee: Ga door naar vraag 9.';
+          explanation = 'Ja: Specificatie kasblad per balansdatum wordt opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
         case 9:
           question.textContent = 'Heeft de klant effecten?';
-          explanation = 'Ja: Het financieel jaaroverzicht van effecten per balansdatum wordt opgevraagd.\nNee: Laat de documenten zien die opgevraagd moeten worden.';
+          explanation = '.';
           break;
         default:
           question.textContent = '';
@@ -279,9 +279,12 @@
       ]});
 
       documents.push({ title: 'Overige', group: 'Indien van toepassing', items: [
-        'Specificatie overige schulden en overlopende passiva',
+        'Overzicht lopende rechtszaken met achterliggende documentatie',
+        'Overzicht/toelichting van belangrijke gebeurtenissen na balansdatum',
+        'Overzicht en documentatie van door derden ingediende claims',
+        'Claims- en geschillen',
         'Financieel jaaroverzicht van alle leningen en financiële leaseverplichtingen',
-        'Specificatie overige vorderingen en overlopende activa'
+        'Overige verplichtingen die genoemd zijn'
       ]});
 
       documents.push({ title: 'Schulden', group: 'Schulden', items: ['Financieel jaaroverzicht van alle leningen en financiële leaseverplichtingen'] });
