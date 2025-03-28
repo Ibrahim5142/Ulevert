@@ -138,13 +138,14 @@
           break;
         case 9:
           question.textContent = 'Heeft de klant effecten?';
+          
           break;
         default:
           question.textContent = '';
           select.style.display = 'none';
           nextButton.style.display = 'none';
           prevButton.style.display = 'none';
-          updateDocuments();
+          explanation = 'Ja: Het financieel jaaroverzicht van effecten per balansdatum wordt opgevraagd.\nNee: Laat de documenten zien die opgevraagd moeten worden.';
           return;
       }
 
