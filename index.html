@@ -113,26 +113,30 @@
           explanation = 'Ja: Geen documenten nodig.\nNee: Kolommenbalans, Afschrijvingsstaat, Facturen van investeringen, etc. worden opgevraagd.';
           break;
         case 3:
+          question.textContent = 'Zal de administratie verzorgd worden door Newtone?';
+          explanation = 'Ja: Nieuwe documenten worden mogelijk opgevraagd.\nNee: Kolommenbalans, Afschrijvingsstaat, Facturen van investeringen worden opgevraagd.';
+          break;
+        case 4:
           question.textContent = 'Heeft de klant voorraad?';
           explanation = 'Ja: De voorraadspecificatie wordt opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
-        case 4:
+        case 5:
           question.textContent = 'Is de klant BTW-plichtig?';
           explanation = 'Ja: Alle ingediende aangiften omzetbelasting worden opgevraagd.\nNee: Ga door naar de volgnede vraag.';
           break;
-        case 5:
+        case 6:
           question.textContent = 'Betreft het een BV?';
           explanation = 'Ja: Aangiften dividendbelasting, vennootschapsbelasting, etc. worden opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
-        case 6:
+        case 7:
           question.textContent = 'Verzorgt Newtone de loonadministratie voor de klant?';
           explanation = 'Ja: Geen extra documenten nodig.\nNee: Jaarwerk, ingediende aangiften loonheffing, en specificatie reserveringen worden opgevraagd.';
           break;
-        case 7:
+        case 8:
           question.textContent = 'Heeft de klant kas?';
           explanation = 'Ja: Specificatie kasblad per balansdatum wordt opgevraagd.\nNee: Ga door naar de volgende vraag.';
           break;
-        case 8:
+        case 9:
           question.textContent = 'Heeft de klant effecten?';
           explanation = '.';
           break;
@@ -163,28 +167,34 @@
       if (step === 1) {
         isNewCustomer = answer;
         if (answer === 'ja') {
-          step = 2;
+          step = 3; // Sla vraag 2 over en ga direct naar vraag 3
+        } else {
+          step = 2; // Ga naar vraag 2 en sla vraag 3 over
+        }
       } else if (step === 2) {
         isAdminHandled = answer;
-        step = 3; 
+        step = 4; // Ga naar vraag 4
       } else if (step === 3) {
         hasStocks = answer;
-        step = 4;
+        step = 4; // Ga naar vraag 4
       } else if (step === 4) {
-        isVatPliable = answer;
+        hasStocks = answer;
         step = 5;
       } else if (step === 5) {
-        isBV = answer;
+        isVatPliable = answer;
         step = 6;
       } else if (step === 6) {
-        isNewToneLoonAdmin = answer;
+        isBV = answer;
         step = 7;
       } else if (step === 7) {
-        hasCash = answer;
+        isNewToneLoonAdmin = answer;
         step = 8;
+      } else if (step === 8) {
+        hasCash = answer;
+        step = 9;
       } else {
         hasSecurities = answer;
-        step = 9;
+        step = 10;
       }
 
       showQuestion();
