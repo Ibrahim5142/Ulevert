@@ -234,7 +234,9 @@
           'Facturen/specificatie van (des)investeringen',
           'OZB-aanslagen entaxatierapporten', 
           'Specificatie kruisposten',
-          'Lijst openstaande postenlijst crediteuren en debiteuren'
+          'Lijst openstaande postenlijst crediteuren en debiteuren',
+          'Specificatie overige schulden en overlopende passiva',
+          'Specificatie overige vorderingen en overlopende activa'
         ]});
       }
       if (hasStocks === 'ja') {
@@ -268,9 +270,12 @@
         'Financieel jaaroverzicht van alle bankrekeningen'
       ]});
 
-      documents.push({ title: 'Overige', group: 'Overige', items: [
-        'Specificatie overige schulden en overlopende passiva',
-        'Specificatie overige vorderingen en overlopende activa'
+      documents.push({ title: 'Indien van toepassing', group: 'Indien van toepassing', items: [
+        'Overzicht lopende rechtszaken met achterliggende documentatie',
+        'Overzicht en documentatie van door derden ingediende claims'
+        'Overzicht/toelichting van belangrijke gebeurtenissen na balansdatum'
+        'Claims- en geschillen'
+        'Overige verplichtingen die genoemd zijn'
       ]});
 
       documents.push({ title: 'Schulden', group: 'Schulden', items: ['Financieel jaaroverzicht van alle leningen en financiële leaseverplichtingen'] });
