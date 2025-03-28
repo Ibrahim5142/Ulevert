@@ -243,12 +243,19 @@
           'Afschrijvingsstaat', 
           'Facturen/specificatie van (des)investeringen',
           'OZB-aanslagen entaxatierapporten', 
+          'Specificatie overige schulden en overlopende passiva',
+          'Specificatie overige vorderingen en overlopende activa',
           'Specificatie kruisposten',
           'Lijst openstaande postenlijst crediteuren en debiteuren'
         ]});
       }
       if (hasStocks === 'ja') {
-        documents.push({ title: 'Voorraad', group: 'Voorraad', items: ['Voorraadspecificatie'] });
+        documents.push({ title: 'Voorraad', group: 'Voorraad', items: [
+          'Voorraadlijst', 
+          'Onderbouwing incourante voorraden', 
+          'Specificatie goederen onderweg', 
+          'Inventarisatielijst'
+        ] });
       }
       if (isVatPliable === 'ja') {
         documents.push({ title: 'BTW', group: 'BTW', items: ['Alle ingediende aangiften omzetbelasting'] });
